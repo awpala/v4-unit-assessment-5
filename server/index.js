@@ -1,14 +1,22 @@
 require('dotenv').config();
 const massive = require('massive');
+const session = require('express-session');
 const express = require('express'),
       userCtrl = require('./controllers/user'),
       postCtrl = require('./controllers/posts')
 
- const { SERVER_PORT, CONNECTION_STRING } = process.env;
+ const { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env;
 
 const app = express();
 
 app.use(express.json());
+
+app.use(session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 365 }, // 1 year
+}))
 
 massive({
     connectionString: CONNECTION_STRING,
