@@ -37,8 +37,18 @@ module.exports = {
         }
       }
     },
-    createPost: (req, res) => {
-      //code here
+    createPost: async (req, res) => {
+      let { id } = req.session.user;
+      let { title, img, content } = req.body;
+      const date = new Date();
+      const db = await req.app.get('db');
+
+      if (id) {
+        db.post.create_post([id, title, img, content, date])
+          .then(_ => res.sendStatus(200));
+      } else {
+        return res.status(403).send('Unauthorized. Please log in.');
+      }
     },
     readPost: (req, res) => {
       req.app.get('db').post.read_post(req.params.id)
